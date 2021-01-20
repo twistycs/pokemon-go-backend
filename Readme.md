@@ -1,0 +1,1 @@
+docker run -p 5000:3306 --name pokemon-mysql -e MYSQL_ROOT_PASSWORD=password -d --restart unless-stopped mysql:5.6
