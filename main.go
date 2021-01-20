@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	database "github.com/twistycs/pokemon-go-backend/databases"
+	"github.com/twistycs/pokemon-go-backend/routes"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -24,7 +25,7 @@ func main() {
 	defer fmt.Println("Close Connection DB !!!")
 	defer closeConnectionDB.Close()
 
-	// server := routes.SetUpRoutes()
-	// server.Run(":9999")
+	server := routes.SetUpRoutes()
+	server.Run(":9999")
 
 }
