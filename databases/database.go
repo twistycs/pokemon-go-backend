@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -32,5 +33,5 @@ func SetUpDb() *DBConfig {
 //ReadConfigDBFile print
 func (db *DBConfig) ReadConfigDBFile() string {
 	fmt.Printf("%+v", db)
-	return fmt.Sprintf(db.User + ":" + db.Password + "@tcp(" + db.Host + ")/" + db.DBName + "?charset=utf8&parseTime=True&loc=Local")
+	return fmt.Sprintf(db.User + ":" + db.Password + "@tcp(" + db.Host + ":" + strconv.Itoa(db.Port) + ")/" + db.DBName + "?charset=utf8&parseTime=True&loc=Local")
 }
