@@ -1,5 +1,5 @@
 host: "localhost"
 port: "5000"
-dbName: "Pokemon"
+dbName: "pokemon"
 user: "root"
 password: "password"
