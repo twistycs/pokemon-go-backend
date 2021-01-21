@@ -1,8 +1,6 @@
 package routes
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/twistycs/pokemon-go-backend/controller"
 	database "github.com/twistycs/pokemon-go-backend/databases"
@@ -33,9 +31,7 @@ func SetUpRoutes() *gin.Engine {
 
 	user.Use(middlewares.AuthorizeBearer()) //authen token
 	{
-		user.GET("/", func(c *gin.Context) {
-			c.JSON(http.StatusOK, "TEST")
-		})
+		user.GET("/", userController.GetAllUserController)
 	}
 
 	// {
