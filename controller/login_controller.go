@@ -4,11 +4,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/twistycs/pokemon-go-backend/imp"
 	"github.com/twistycs/pokemon-go-backend/models"
 	"github.com/twistycs/pokemon-go-backend/services"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LogInController struct {
@@ -24,21 +25,27 @@ func LogInConstructor(userService imp.UserService) *LogInController {
 func (logInController *LogInController) LogInController(c *gin.Context) {
 	var jsonInputUser models.User
 	if err := c.ShouldBindJSON(&jsonInputUser); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	} else if jsonInputUser.UserName == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Username required"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errorMessage": err.Error()})
 		return
 	}
+
 	resp, err := logInController.userService.GetUserByUserName(jsonInputUser.UserName)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
-	} else if (resp != models.User{}) {
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(resp.Password), []byte(jsonInputUser.Password))
+
+	if (err != nil || jsonInputUser.UserName == "" || resp == models.User{}) {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"errorMessage": "Username or password incorrect."})
+		return
+	}
+
+	if (resp != models.User{}) {
 		claims := services.TokenClaim{
 			jsonInputUser.UserName,
 			jwt.StandardClaims{
-				ExpiresAt: time.Now().Add(time.Minute * 1).Unix(),
+				ExpiresAt: time.Now().Add(time.Hour * 10).Unix(),
 				Issuer:    jsonInputUser.UserName,
 				IssuedAt:  time.Now().Unix(),
 			},
@@ -49,8 +56,5 @@ func (logInController *LogInController) LogInController(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusOK, token)
 		}
-	} else {
-		c.AbortWithStatusJSON(http.StatusNotFound, "User not found")
-		return
 	}
 }
