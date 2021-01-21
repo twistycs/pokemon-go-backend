@@ -14,6 +14,7 @@ func AuthorizeBearer() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bearToken := c.GetHeader("Authorization")
 		tokenFromHeader := strings.Split(bearToken, " ")
+		fmt.Println("Token After Split : " + tokenFromHeader[1])
 		if len(tokenFromHeader) == 2 {
 			token, err := services.VerifyToken(tokenFromHeader[1])
 			fmt.Println(token)
