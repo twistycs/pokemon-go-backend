@@ -12,14 +12,14 @@ import (
 )
 
 func SetUpRoutes() *gin.Engine {
+	r := gin.Default()
+	r.Use(middlewares.Cors())
 
 	userRepo := repositories.UserRepositories(database.DB)
 	userService := services.NewUserService(userRepo)
-	// userController := controller.UserControllerInit(userService)
+	userController := controller.UserControllerInit(userService)
 
 	logInController := controller.LogInConstructor(userService)
-
-	r := gin.Default()
 
 	login := r.Group("/v1/login")
 	{
@@ -27,7 +27,11 @@ func SetUpRoutes() *gin.Engine {
 	}
 
 	user := r.Group("/v1/users")
-	user.Use(middlewares.AuthorizeBearer())
+	{
+		user.POST("/", userController.InsertUserController)
+	}
+
+	user.Use(middlewares.AuthorizeBearer()) //authen token
 	{
 		user.GET("/", func(c *gin.Context) {
 			c.JSON(http.StatusOK, "TEST")
@@ -39,16 +43,11 @@ func SetUpRoutes() *gin.Engine {
 	// }
 
 	// {
-	// 	user.POST("/", userController.InsertUserController)
-	// }
-
-	// {
 	// 	user.PUT("/:id", userController.UpdateUserController)
 	// }
 
 	// {
 	// 	user.DELETE("/:id", userController.DeleteUserByIdController)
 	// }
-
 	return r
 }
