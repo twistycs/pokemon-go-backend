@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/twistycs/pokemon-go-backend/imp"
 	"github.com/twistycs/pokemon-go-backend/models"
@@ -34,6 +35,8 @@ func (userService *userService) GetUserByUserName(userId string) (users models.U
 }
 
 func (userService *userService) InsertUser(user *models.User) (err error) {
+	user.CreatedDate = time.Now()
+	user.UpdatedDate = time.Now()
 	handle := userService.userRepo.InsertUser(user)
 	if handle != nil {
 		fmt.Println("Error")
