@@ -21,6 +21,10 @@ func SetUpRoutes() *gin.Engine {
 	pokemonService := services.NewPokemonService(pokemonRepo)
 	pokemonController := controller.PokemonControllerInit(pokemonService)
 
+	pokemonDexRepo := repositories.PokemonDexRepositories(database.DB)
+	pokemonDexService := services.NewPokemonDexService(pokemonDexRepo)
+	pokemonDexController := controller.PokemonDexControllerInit(pokemonDexService)
+
 	logInController := controller.LogInConstructor(userService)
 
 	login := r.Group("/v1/login")
@@ -54,6 +58,12 @@ func SetUpRoutes() *gin.Engine {
 	pokemon.Use(middlewares.AuthorizeBearer()) //authen token
 	{
 		pokemon.GET("/", pokemonController.GetAllPokemonController)
+	}
+
+	pokemondexs := r.Group("/v1/pokemondexs")
+	pokemondexs.Use(middlewares.AuthorizeBearer()) //authen token
+	{
+		pokemondexs.GET("/", pokemonDexController.GetAllPokemonDexController)
 	}
 	return r
 }
