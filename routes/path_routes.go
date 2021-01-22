@@ -17,6 +17,10 @@ func SetUpRoutes() *gin.Engine {
 	userService := services.NewUserService(userRepo)
 	userController := controller.UserControllerInit(userService)
 
+	pokemonRepo := repositories.PokemonRepositories(database.DB)
+	pokemonService := services.NewPokemonService(pokemonRepo)
+	pokemonController := controller.PokemonControllerInit(pokemonService)
+
 	logInController := controller.LogInConstructor(userService)
 
 	login := r.Group("/v1/login")
@@ -45,5 +49,11 @@ func SetUpRoutes() *gin.Engine {
 	// {
 	// 	user.DELETE("/:id", userController.DeleteUserByIdController)
 	// }
+
+	pokemon := r.Group("/v1/pokemons")
+	pokemon.Use(middlewares.AuthorizeBearer()) //authen token
+	{
+		pokemon.GET("/", pokemonController.GetAllPokemonController)
+	}
 	return r
 }
