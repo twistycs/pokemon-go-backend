@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -36,6 +37,8 @@ func (logInController *LogInController) LogInController(c *gin.Context) {
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(resp.Password), []byte(jsonInputUser.Password))
 
+	fmt.Println(jsonInputUser.UserName)
+	fmt.Println(resp)
 	if (err != nil || jsonInputUser.UserName == "" || resp == models.User{}) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"errorMessage": "Username or password incorrect."})
 		return
