@@ -22,7 +22,7 @@ func (repo *userRepository) GetAllUser(u *[]models.User) (err error) {
 }
 
 func (repo *userRepository) GetUserByUserName(u *models.User, userId string) (err error) {
-	if err = repo.connect.Where("username = ?", userId).Find(u).Error; err != nil {
+	if err = repo.connect.Where("LOWER(username = ?)", userId).Find(u).Error; err != nil {
 		return err
 	}
 	return nil
