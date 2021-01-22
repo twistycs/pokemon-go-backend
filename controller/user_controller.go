@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/twistycs/pokemon-go-backend/imp"
@@ -54,6 +55,7 @@ func (u *UserController) InsertUserController(c *gin.Context) {
 	}
 	fmt.Println(string(hashedPassword))
 	jsonInputUser.Password = string(hashedPassword)
+	jsonInputUser.UserName = strings.ToLower(jsonInputUser.UserName)
 	user, err := u.userService.GetUserByUserName(jsonInputUser.UserName)
 	if (user != models.User{}) {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": "Username already existing"})
