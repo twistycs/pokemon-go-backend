@@ -57,7 +57,8 @@ func (logInController *LogInController) LogInController(c *gin.Context) {
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		} else {
-			c.JSON(http.StatusOK, token)
+			c.JSON(http.StatusOK, gin.H{"userName": resp.UserName,
+				"token": token})
 		}
 	}
 }
